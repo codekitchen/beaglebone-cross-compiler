@@ -31,15 +31,15 @@ Vagrant.configure("2") do |config|
   apt-get update
   apt-get -fy install
   apt-get -y install git-core make gawk bitbake diffstat texinfo chrpath build-essential
+  # angrstrom complains about /bin/sh pointing to dash
+  rm /bin/sh
+  ln -s /bin/bash /bin/sh
   SCRIPT
 
   config.vm.provision "shell", privileged: false, inline: <<-SCRIPT
   git clone git://github.com/Angstrom-distribution/setup-scripts.git
   cd setup-scripts
   sed -i.bak '/INHERIT.*rm_work/d' conf/local.conf
-  # angrstrom complains about /bin/sh pointing to dash
-  rm /bin/sh
-  ln -s /bin/bash /bin/sh
   MACHINE=beaglebone ./oebb.sh config beaglebone
   MACHINE=beaglebone ./oebb.sh update
   MACHINE=beaglebone ./oebb.sh bitbake virtual/kernel
